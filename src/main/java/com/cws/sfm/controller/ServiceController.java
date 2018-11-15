@@ -1,8 +1,10 @@
 package com.cws.sfm.controller;
 
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.cws.sfm.common.ZFile;
 import com.cws.sfm.dto.AuthenticationDto;
 import com.cws.sfm.dto.TokenDto;
 import com.cws.sfm.req.AuthenticationReq;
@@ -34,6 +37,10 @@ public class ServiceController {
 
 	private static final Logger _log = Logger.getLogger(ServiceController.class.getName());
 
+	private String _path;
+
+	private String _temp;
+
 	// end
 
 	// region -- Methods --
@@ -42,7 +49,8 @@ public class ServiceController {
 	 * Initialize
 	 */
 	public ServiceController() {
-
+		_path = ZFile.getPath("/template/");
+		_temp = ZFile.read(_path + "_temp.txt");
 	}
 
 	private TokenDto getToken(AuthenticationDto o) {
@@ -92,10 +100,11 @@ public class ServiceController {
 			AuthenticationDto src = req.getSource();
 			// AuthenticationDto des = req.getDestination();
 
+			String object = req.getObject();
 			TokenDto t = getToken(src);
 			String token = t.getAccessToken();
 			String url = t.getInstanceUrl();
-			url += "/services/data/v44.0/ui-api/object-info/Account";
+			url += "/services/data/v44.0/ui-api/object-info/" + object;
 
 			RestTemplate rst = new RestTemplate();
 
@@ -111,7 +120,35 @@ public class ServiceController {
 			rsp = rst.exchange(url, HttpMethod.GET, reqEntity, String.class);
 
 			String s = rsp.getBody();
-			res.setResult(s);
+			String t1 = "";
+
+			JSONObject resobj = new JSONObject(s);
+			Iterator<?> keys = resobj.keys();
+			JSONObject to = new JSONObject(resobj.get("fields").toString());
+			keys = to.keys();
+
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+
+				if (key.endsWith("__c")) {
+					System.out.println(key);
+
+					if (to.get(key) instanceof JSONObject) {
+						JSONObject xx = new JSONObject(to.get(key).toString());
+						String fullName = (String) xx.get("apiName");
+						String label = (String) xx.get("label");
+						String type = (String) xx.get("dataType");
+
+						String t2 = _temp.replace("{fullName}", fullName);
+						t2 = t2.replace("{label}", label);
+						t2 = t2.replace("{type}", type);
+						t1 += t2;
+					}
+				}
+			}
+
+			ZFile.write(_path + object + ".html", t1);
+			res.setResult(t1);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_log.log(Level.SEVERE, ex.getMessage(), ex);

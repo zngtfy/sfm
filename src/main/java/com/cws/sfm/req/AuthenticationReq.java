@@ -17,6 +17,9 @@ public class AuthenticationReq {
 	@JsonProperty(value = "destination")
 	private AuthenticationDto destination;
 
+	@JsonProperty(value = "object")
+	private String object;
+
 	// end
 
 	// region -- Get set --
@@ -37,6 +40,14 @@ public class AuthenticationReq {
 		this.destination = destination;
 	}
 
+	public String getObject() {
+		return object;
+	}
+
+	public void setObject(String object) {
+		this.object = object;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -47,6 +58,7 @@ public class AuthenticationReq {
 	public AuthenticationReq() {
 		source = new AuthenticationDto();
 		destination = new AuthenticationDto();
+		object = "";
 	}
 
 	// end

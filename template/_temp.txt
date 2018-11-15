@@ -1,0 +1,5 @@
+	<fields>
+		<fullName>{fullName}</fullName>
+		<label>{label}</label>
+		<type>{type}</type>
+	</fields>
