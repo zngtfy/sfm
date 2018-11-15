@@ -2,4 +2,5 @@
 		<fullName>{fullName}</fullName>
 		<label>{label}</label>
 		<type>{type}</type>
+		<length>{length}</length>
 	</fields>

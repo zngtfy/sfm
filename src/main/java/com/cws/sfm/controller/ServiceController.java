@@ -138,11 +138,45 @@ public class ServiceController {
 						String fullName = (String) xx.get("apiName");
 						String label = (String) xx.get("label");
 						String type = (String) xx.get("dataType");
+						Integer length = (Integer) xx.get("length");
 
-						String t2 = _temp.replace("{fullName}", fullName);
-						t2 = t2.replace("{label}", label);
-						t2 = t2.replace("{type}", type);
-						t1 += t2;
+						if ("String".equals(type)) {
+							type = "Text";
+						}
+
+						if ("Boolean".equals(type)) {
+							type = "Checkbox";
+						}
+
+						if ("Einstein_Article_3_Date__c".equals(fullName)) {
+							continue;
+						}
+						if ("Einstein_Article_3_URL__c".equals(fullName)) {
+							continue;
+						}
+
+						// Formula
+						if ("Double".equals(type)) {
+							continue;
+						}
+
+						if ("MultiPicklist".equals(type)) {
+							continue;
+						}
+
+						if (!"Reference".equals(type)) {
+							String t2 = _temp.replace("{fullName}", fullName);
+							t2 = t2.replace("{label}", label);
+							t2 = t2.replace("{type}", type);
+
+							if ("Url".equals(type) || "Boolean".equals(type)) {
+								t2 = t2.replace("<length>{length}</length>", "");
+							} else {
+								t2 = t2.replace("{length}", length.toString());
+							}
+
+							t1 += t2;
+						}
 					}
 				}
 			}
