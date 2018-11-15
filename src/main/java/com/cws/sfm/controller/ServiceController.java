@@ -183,12 +183,6 @@ public class ServiceController {
 							t2 = t2.replace("<scale>{scale}</scale>", "");
 						}
 
-						if ("Checkbox".equals(type)) {
-							t2 = t2.replace("<length>{length}</length>", "<defaultValue>false</defaultValue>");
-						} else {
-							t2 = t2.replace("<length>{length}</length>", "");
-						}
-
 						if (calculated == true) {
 							if ("Currency".equals(type) || "Percent".equals(type)) {
 								t2 = t2.replace("{formula}", "0");
@@ -201,6 +195,12 @@ public class ServiceController {
 							}
 
 							t2 = t2.replace("<formula>{formula}</formula>", "");
+						}
+
+						if ("Checkbox".equals(type)) {
+							t2 = t2.replace("<length>{length}</length>", "<defaultValue>false</defaultValue>");
+						} else {
+							t2 = t2.replace("<length>{length}</length>", "");
 						}
 
 						t1 += t2;
