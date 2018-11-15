@@ -3,4 +3,5 @@
 		<label>{label}</label>
 		<type>{type}</type>
 		<length>{length}</length>
+		<formula>{formula}</formula>
 	</fields>
