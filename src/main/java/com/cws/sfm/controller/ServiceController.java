@@ -140,6 +140,8 @@ public class ServiceController {
 						String type = (String) xx.get("dataType");
 						Integer length = (Integer) xx.get("length");
 						Boolean calculated = (Boolean) xx.get("calculated");
+						Integer precision = (Integer) xx.get("precision");
+						Integer scale = (Integer) xx.get("scale");
 
 						if ("String".equals(type)) {
 							type = "Text";
@@ -173,33 +175,35 @@ public class ServiceController {
 						t2 = t2.replace("{label}", label);
 						t2 = t2.replace("{type}", type);
 
-						if (calculated == true) {
+						if ("Currency".equals(type) || "Percent".equals(type)) {
+							t2 = t2.replace("{precision}", precision.toString());
+							t2 = t2.replace("{scale}", scale.toString());
+						} else {
+							t2 = t2.replace("<precision>{precision}</precision>", "");
+							t2 = t2.replace("<scale>{scale}</scale>", "");
+						}
+
+						if ("Checkbox".equals(type)) {
+							t2 = t2.replace("<length>{length}</length>", "<defaultValue>false</defaultValue>");
+						} else {
 							t2 = t2.replace("<length>{length}</length>", "");
-							
-							if ("Text".equals(type)) {
+						}
+
+						if (calculated == true) {
+							if ("Currency".equals(type) || "Percent".equals(type)) {
+								t2 = t2.replace("{formula}", "0");
+							} else if ("Text".equals(type)) {
 								t2 = t2.replace("{formula}", "");
 							}
-
-							if ("Currency".equals(type)) {
-								t2 = t2.replace("{formula}", "0");
-							}
-
-							if ("Percent".equals(type)) {
-								t2 = t2.replace("{formula}", "0");
-							}
-
 						} else {
-							t2 = t2.replace("<formula>{formula}</formula>", "");
-							
 							if ("Text".equals(type)) {
 								t2 = t2.replace("{length}", length.toString());
-							} else {
-								t2 = t2.replace("<length>{length}</length>", "");
 							}
+
+							t2 = t2.replace("<formula>{formula}</formula>", "");
 						}
 
 						t1 += t2;
-
 					}
 				}
 			}
