@@ -92,7 +92,7 @@ public class ServiceController {
 		return res;
 	}
 
-	private String getToken(AuthenticationDto o, String object) {
+	private String getObject(AuthenticationDto o, String object) {
 		String res = "";
 
 		try {
@@ -133,8 +133,8 @@ public class ServiceController {
 			AuthenticationDto des = req.getDestination(); // prod
 
 			String object = req.getObject();
-			String demo = getToken(src, object);
-			String prod = getToken(des, object);
+			String demo = getObject(src, object);
+			String prod = getObject(des, object);
 			String t = "";
 
 			ZFile.write(_path + object + "-demo.json", demo);
