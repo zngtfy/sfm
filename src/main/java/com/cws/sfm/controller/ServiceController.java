@@ -42,7 +42,7 @@ public class ServiceController {
 	private String _temp;
 
 	private String _valueSet;
-	
+
 	private String _formula;
 
 	// end
@@ -140,11 +140,11 @@ public class ServiceController {
 
 			String object = req.getObject();
 			String demo = getObject(src, object);
-			//String prod = getObject(des, object);
+			// String prod = getObject(des, object);
 			String t = "";
 
-			//ZFile.write(_path + object + "-demo.json", demo);
-			//ZFile.write(_path + object + "-prod.json", prod);
+			// ZFile.write(_path + object + "-demo.json", demo);
+			// ZFile.write(_path + object + "-prod.json", prod);
 
 			JSONObject resobj = new JSONObject(demo);
 			JSONObject to = new JSONObject(resobj.get("fields").toString());
@@ -196,15 +196,15 @@ public class ServiceController {
 						if ("Reference".equals(type)) {
 							continue;
 						}
-						
+
 						if ("Account_Status__c".equals(fullName)) {
 							continue;
 						}
-						
+
 						if ("Goal_Attainment__c".equals(fullName)) {
 							continue;
 						}
-						
+
 						// Skip
 						if ("jsImpacts__Data_com_does_not_auto_update__c".equals(fullName)) {
 							continue;
@@ -262,6 +262,73 @@ public class ServiceController {
 						t += t2;
 					}
 				}
+			}
+
+			ZFile.write(_path + object + ".html", t);
+			res.setResult(t);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_log.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	@PostMapping("/get-info")
+	public ResponseEntity<?> getInfo(@RequestBody AuthenticationReq req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			AuthenticationDto src = req.getSource(); // demo
+
+			String object = req.getObject();
+			String demo = getObject(src, object);
+			String t = "";
+			ZFile.write(_path + object + "-demo.json", demo);
+
+			JSONObject resobj = new JSONObject(demo);
+			JSONObject to = new JSONObject(resobj.get("fields").toString());
+			Iterator<?> keys = to.keys();
+			int totalField = 0;
+			int totalCustomField = 0;
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String t1 = "";
+				if (to.get(key) instanceof JSONObject) {
+					JSONObject xx = new JSONObject(to.get(key).toString());
+					String fullName = (String) xx.get("apiName");
+					String label = (String) xx.get("label");
+					String type = (String) xx.get("dataType");
+					Integer length = (Integer) xx.get("length");
+					Integer precision = (Integer) xx.get("precision");
+					Integer scale = (Integer) xx.get("scale");
+					Boolean calculated = (Boolean) xx.get("calculated");
+
+					if ("String".equals(type)) {
+						type = "Text";
+					}
+					if ("Boolean".equals(type)) {
+						type = "Checkbox";
+					}
+					if ("Reference".equals(type)) {
+						type = "Lookup";
+					}
+
+					t1 = fullName + "\t" + label + "\t";
+					t1 += type + "\t" + length + "\t";
+					t1 += precision + "\t" + scale + "\t";
+					t1 += calculated + "\t";
+				}
+
+				if (key.endsWith("__c")) {
+					totalCustomField++;
+					t1 += "TRUE" + "\n";
+				} else {
+					t1 += "FALSE" + "\n";
+				}
+
+				t += t1;
+				totalField++;
 			}
 
 			ZFile.write(_path + object + ".html", t);
