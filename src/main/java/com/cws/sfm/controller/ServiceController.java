@@ -92,16 +92,12 @@ public class ServiceController {
 		return res;
 	}
 
-	@PostMapping("/upload")
-	public ResponseEntity<?> upload(@RequestBody AuthenticationReq req) {
-		SingleRsp res = new SingleRsp();
+	private String getToken(AuthenticationDto o, String object) {
+		String res = "";
 
 		try {
-			AuthenticationDto src = req.getSource();
-			// AuthenticationDto des = req.getDestination();
+			TokenDto t = getToken(o);
 
-			String object = req.getObject();
-			TokenDto t = getToken(src);
 			String token = t.getAccessToken();
 			String url = t.getInstanceUrl();
 			url += "/services/data/v44.0/ui-api/object-info/" + object;
@@ -119,13 +115,34 @@ public class ServiceController {
 			ResponseEntity<String> rsp;
 			rsp = rst.exchange(url, HttpMethod.GET, reqEntity, String.class);
 
-			String s = rsp.getBody();
-			String t1 = "";
+			res = rsp.getBody();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_log.log(Level.SEVERE, ex.getMessage(), ex);
+		}
 
-			JSONObject resobj = new JSONObject(s);
-			Iterator<?> keys = resobj.keys();
+		return res;
+	}
+
+	@PostMapping("/upload")
+	public ResponseEntity<?> upload(@RequestBody AuthenticationReq req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			AuthenticationDto src = req.getSource();
+			AuthenticationDto des = req.getDestination();
+
+			String object = req.getObject();
+			String s1 = getToken(src, object);
+			String s2 = getToken(des, object);
+			String t = "";
+			
+			ZFile.write(_path + object + "-src.json", s1);
+			ZFile.write(_path + object + "-des.json", s2);
+
+			JSONObject resobj = new JSONObject(s1);
 			JSONObject to = new JSONObject(resobj.get("fields").toString());
-			keys = to.keys();
+			Iterator<?> keys = to.keys();
 
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
@@ -203,13 +220,13 @@ public class ServiceController {
 							t2 = t2.replace("<length>{length}</length>", "");
 						}
 
-						t1 += t2;
+						t += t2;
 					}
 				}
 			}
 
-			ZFile.write(_path + object + ".html", t1);
-			res.setResult(t1);
+			ZFile.write(_path + object + ".html", t);
+			res.setResult(t);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_log.log(Level.SEVERE, ex.getMessage(), ex);
