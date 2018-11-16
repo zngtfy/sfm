@@ -1,0 +1,11 @@
+		<type>{type}</type>
+		<valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>              
+                <value>
+                    <fullName>Bronze</fullName>
+                    <default>true</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>

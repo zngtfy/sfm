@@ -41,6 +41,8 @@ public class ServiceController {
 
 	private String _temp;
 
+	private String _valueSet;
+
 	// end
 
 	// region -- Methods --
@@ -51,6 +53,7 @@ public class ServiceController {
 	public ServiceController() {
 		_path = ZFile.getPath("/template/");
 		_temp = ZFile.read(_path + "_temp.txt");
+		_valueSet = ZFile.read(_path + "_valueSet.txt");
 	}
 
 	private TokenDto getToken(AuthenticationDto o) {
@@ -134,11 +137,11 @@ public class ServiceController {
 
 			String object = req.getObject();
 			String demo = getObject(src, object);
-			String prod = getObject(des, object);
+			//String prod = getObject(des, object);
 			String t = "";
 
-			ZFile.write(_path + object + "-demo.json", demo);
-			ZFile.write(_path + object + "-prod.json", prod);
+			//ZFile.write(_path + object + "-demo.json", demo);
+			//ZFile.write(_path + object + "-prod.json", prod);
 
 			JSONObject resobj = new JSONObject(demo);
 			JSONObject to = new JSONObject(resobj.get("fields").toString());
@@ -174,6 +177,9 @@ public class ServiceController {
 						if ("Einstein_Article_3_URL__c".equals(fullName)) {
 							continue;
 						}
+						if ("Partner_Program_Level__c".equals(fullName)) {
+							continue;
+						}
 
 						// Formula
 						if ("Double".equals(type)) {
@@ -189,6 +195,11 @@ public class ServiceController {
 						}
 
 						String t2 = _temp.replace("{fullName}", fullName);
+
+						if ("Picklist".equals(type)) {
+							t2 = t2.replace("<type>{type}</type>", _valueSet);
+						}
+
 						t2 = t2.replace("{label}", label);
 						t2 = t2.replace("{type}", type);
 
