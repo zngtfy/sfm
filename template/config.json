@@ -1,0 +1,17 @@
+{
+    "destination": {
+        "clientId": "3MVG9d8..z.hDcPJ5cxnT15VAlnmjYNUTDlvQN7JfEMFAp0bX0TRfOx5KmrpoN08VB_QQpf56ALz8gI36jeNJ",
+        "clientSecret": "4769392164141431328",
+        "password": "cimb123",
+        "url": "https://login.salesforce.com/services/oauth2/token",
+        "userName": "leo@cimbsecurities.com.demo"
+    },
+    "source": {
+        "clientId": "3MVG9YDQS5WtC11p9cEL_hYCBJu80MIDpHsbA.fbPbtBfn5p9H75IGGfldexqMNgt3jO31x4odhZaWYePsAXY",
+        "clientSecret": "3878474052674649992",
+        "password": "cimb@123",
+        "url": "https://login.salesforce.com/services/oauth2/token",
+        "userName": "cws@cgs-cimb.com"
+    },
+    "object": "Account"
+}
