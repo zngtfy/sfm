@@ -129,18 +129,18 @@ public class ServiceController {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			AuthenticationDto src = req.getSource();
-			AuthenticationDto des = req.getDestination();
+			AuthenticationDto src = req.getSource(); // demo
+			AuthenticationDto des = req.getDestination(); // prod
 
 			String object = req.getObject();
-			String s1 = getToken(src, object);
-			String s2 = getToken(des, object);
+			String demo = getToken(src, object);
+			String prod = getToken(des, object);
 			String t = "";
-			
-			ZFile.write(_path + object + "-src.json", s1);
-			ZFile.write(_path + object + "-des.json", s2);
 
-			JSONObject resobj = new JSONObject(s1);
+			ZFile.write(_path + object + "-demo.json", demo);
+			ZFile.write(_path + object + "-prod.json", prod);
+
+			JSONObject resobj = new JSONObject(demo);
 			JSONObject to = new JSONObject(resobj.get("fields").toString());
 			Iterator<?> keys = to.keys();
 
