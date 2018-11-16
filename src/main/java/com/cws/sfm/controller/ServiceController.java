@@ -42,6 +42,8 @@ public class ServiceController {
 	private String _temp;
 
 	private String _valueSet;
+	
+	private String _formula;
 
 	// end
 
@@ -54,6 +56,7 @@ public class ServiceController {
 		_path = ZFile.getPath("/template/");
 		_temp = ZFile.read(_path + "_temp.txt");
 		_valueSet = ZFile.read(_path + "_valueSet.txt");
+		_formula = ZFile.read(_path + "_formula.txt");
 	}
 
 	private TokenDto getToken(AuthenticationDto o) {
@@ -193,6 +196,31 @@ public class ServiceController {
 						if ("Reference".equals(type)) {
 							continue;
 						}
+						
+						if ("Account_Status__c".equals(fullName)) {
+							continue;
+						}
+						
+						if ("Goal_Attainment__c".equals(fullName)) {
+							continue;
+						}
+						
+						// Skip
+						if ("jsImpacts__Data_com_does_not_auto_update__c".equals(fullName)) {
+							continue;
+						}
+						if ("EDY_ORGCUSTOM__Old_Name__c".equals(fullName)) {
+							continue;
+						}
+						if ("ShippingGeo__c".equals(fullName)) {
+							continue;
+						}
+						if ("jsImpacts__Data_com_Matched__c".equals(fullName)) {
+							continue;
+						}
+						if ("EDY_ORGCUSTOM__DB__c".equals(fullName)) {
+							continue;
+						}
 
 						String t2 = _temp.replace("{fullName}", fullName);
 
@@ -215,7 +243,7 @@ public class ServiceController {
 							if ("Currency".equals(type) || "Percent".equals(type)) {
 								t2 = t2.replace("{formula}", "0");
 							} else if ("Text".equals(type)) {
-								t2 = t2.replace("{formula}", "");
+								t2 = t2.replace("{formula}", "&quot;&quot;");
 							}
 						} else {
 							if ("Text".equals(type)) {
